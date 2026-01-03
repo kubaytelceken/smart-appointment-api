@@ -77,5 +77,13 @@ module.exports = (sequelize) => {
     }
   );
 
+
+   User.associate = (models) => {
+    User.hasOne(models.Profile, { foreignKey: "user_id" });
+    User.hasMany(models.Business, { foreignKey: "owner_id" });
+    User.hasMany(models.UserSubscription, { foreignKey: "user_id" });
+    User.hasMany(models.Appointment, { foreignKey: "user_id" });
+  };
+
   return User;
 };
