@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
             },
             slug :{
                 type : DataTypes.STRING,
-                unique: true,
+                unique: false,
                 allowNull : true
             },
             description :{
@@ -46,7 +46,7 @@ module.exports = (sequelize) => {
                 allowNull : true
             },
             address :{
-                type : DataTypes.STRING,
+                type : DataTypes.TEXT,
                 allowNull : true
             },
             location_lat :{
@@ -57,7 +57,7 @@ module.exports = (sequelize) => {
                 type : DataTypes.DECIMAL(10, 7),
                 allowNull : true
             },
-            is_active: {
+            status: {
                 type: DataTypes.ENUM("active", "passive", "banned"),
                 allowNull: false,
                 defaultValue: "active"
