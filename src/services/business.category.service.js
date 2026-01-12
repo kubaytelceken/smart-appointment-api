@@ -9,8 +9,7 @@ const ALLOWED_STATUSES = ["active", "passive", "banned"];
 const getBusinessCategories = async () => {
   return await BusinessCategory.findAll({
     order: [
-      ["order", "ASC"],
-      ["created_at", "ASC"]
+      ["order", "ASC"]
     ]
   });
 };
@@ -23,8 +22,7 @@ const getBusinessCategoriesWithActives = async () => {
     where: { status: "active" },
     attributes: ["id", "name", "icon"],
     order: [
-      ["order", "ASC"],
-      ["created_at", "ASC"]
+      ["order", "ASC"]
     ]
   });
 };
