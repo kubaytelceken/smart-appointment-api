@@ -1,0 +1,25 @@
+const express = require("express");
+const router = express.Router();
+
+const subscriptionPlanController = require("../controllers/subscriptionPlan.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
+
+// 🔐 Tüm plan işlemleri auth korumalı
+router.use(authMiddleware);
+
+// CREATE plan
+router.post("/", subscriptionPlanController.createPlan);
+
+// GET all active plans
+router.get("/", subscriptionPlanController.getPlans);
+
+// GET plan by id
+router.get("/:planId", subscriptionPlanController.getPlanById);
+
+// UPDATE plan
+router.put("/:planId", subscriptionPlanController.updatePlan);
+
+// DELETE plan (soft)
+router.delete("/:planId", subscriptionPlanController.deletePlan);
+
+module.exports = router;
