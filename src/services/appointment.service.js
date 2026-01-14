@@ -1,4 +1,4 @@
-const { Appointment, Business, Service } = require("../models");
+const { Appointment, Business, Service,UserSubscription } = require("../models");
 const { Op } = require("sequelize");
 
 /**
@@ -182,35 +182,52 @@ const completeAppointment = async (ownerId, appointmentId) => {
 /**
  * CANCEL APPOINTMENT (USER or OWNER)
  */
-const cancelAppointment = async (appointmentId, actor) => {
-  const appointment = await Appointment.findOne({
-    where: { id: appointmentId },
-    include: [
-      {
-        model: Business,
-        attributes: ["owner_id"],
+const cancelAppointment = async (userId, appointmentId) => {
+  return await sequelize.transaction(async (t) => {
+    const appointment = await Appointment.findOne({
+      where: {
+        id: appointmentId,
+        user_id: userId
       },
-    ],
-  });
+      transaction: t
+    });
 
-  if (!appointment) {
-    throw new Error("APPOINTMENT_NOT_FOUND");
-  }
+    if (!appointment) {
+      throw new Error("APPOINTMENT_NOT_FOUND");
+    }
 
-  const isOwner = appointment.Business.owner_id === actor.id;
-  const isUser = appointment.user_id === actor.id;
+    if (appointment.status === "cancelled") {
+      return appointment; // idempotent
+    }
 
-  if (!isOwner && !isUser) {
-    throw new Error("FORBIDDEN");
-  }
+    // Appointment'ı cancelled yap
+    await appointment.update(
+      { status: "cancelled" },
+      { transaction: t }
+    );
 
-  if (["cancelled", "completed", "no_show"].includes(appointment.status)) {
+    // Aktif subscription bul
+    const subscription = await UserSubscription.findOne({
+      where: {
+        user_id: userId,
+        is_active: true
+      },
+      transaction: t,
+      lock: t.LOCK.UPDATE
+    });
+
+    if (subscription) {
+      await subscription.update(
+        {
+          remaining_appointments:
+            subscription.remaining_appointments + 1
+        },
+        { transaction: t }
+      );
+    }
+
     return appointment;
-  }
-
-  await appointment.update({ status: "cancelled" });
-
-  return appointment;
+  });
 };
 
 module.exports = {

@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { User, Profile } = require("../models");
+const { assignFreeSubscription } = require("./freeSubscription.service");
+
 
 const register = async ({ email, password }) => {
   const existingUser = await User.findOne({ where: { email } });
@@ -17,7 +19,7 @@ const register = async ({ email, password }) => {
     appointment_limit: 50,
     status: "active"
   });
-
+  await assignFreeSubscription(user.id);
   await Profile.create({
     user_id: user.id
   });
