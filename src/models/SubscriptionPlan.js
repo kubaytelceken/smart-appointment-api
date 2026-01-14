@@ -24,7 +24,7 @@ module.exports = (sequelize) => {
       },
       appointment_limit: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true // null = sınırsız Premium plan için null atarsın, kontrolde if (limit === null) → sınırsız dersin.
       },
       duration_month: {
         type: DataTypes.INTEGER,

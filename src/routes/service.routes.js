@@ -2,11 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const serviceController = require("../controllers/service.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
-// 🔐 Tüm servisler auth korumalı
-router.use(authMiddleware);
-
+const { protect } = require("../middleware/auth.middleware");
+// 🔐 Tüm ad route'ları auth korumalı
+router.use(protect);
 // CREATE service (business owner)
 router.post("/", serviceController.createService);
 

@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const userSubscriptionController = require("../controllers/userSubscription.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
-// 🔐 Tüm subscription işlemleri auth korumalı
-router.use(authMiddleware);
+const { protect } = require("../middleware/auth.middleware");
+// 🔐 Tüm ad route'ları auth korumalı
+router.use(protect);
 
 // BUY subscription
 router.post("/buy", userSubscriptionController.buySubscription);

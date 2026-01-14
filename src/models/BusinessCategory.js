@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
                 allowNull : true
             },
             status: {
-  type: DataTypes.ENUM("active", "passive", "banned"),
+  type: DataTypes.ENUM("active", "passive"),
   defaultValue: "active"
 },
             order : {

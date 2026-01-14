@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const subscriptionPlanController = require("../controllers/subscriptionPlan.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
-// 🔐 Tüm plan işlemleri auth korumalı
-router.use(authMiddleware);
+const { protect } = require("../middleware/auth.middleware");
+// 🔐 Tüm ad route'ları auth korumalı
+router.use(protect);
 
 // CREATE plan
 router.post("/", subscriptionPlanController.createPlan);

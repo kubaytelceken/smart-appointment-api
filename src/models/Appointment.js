@@ -7,17 +7,18 @@ module.exports = (sequelize) => {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+        primaryKey: true,
       },
 
-      user_id: {
+      
+      business_id: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-          model: "users",
-          key: "id"
+          model: "businesses",
+          key: "id",
         },
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
 
       business_id: {
@@ -25,9 +26,9 @@ module.exports = (sequelize) => {
         allowNull: false,
         references: {
           model: "businesses",
-          key: "id"
+          key: "id",
         },
-        onDelete: "CASCADE"
+        onDelete: "CASCADE",
       },
 
       service_id: {
@@ -35,24 +36,24 @@ module.exports = (sequelize) => {
         allowNull: false,
         references: {
           model: "services",
-          key: "id"
+          key: "id",
         },
-        onDelete: "RESTRICT"
+        onDelete: "RESTRICT",
       },
 
       appointment_date: {
         type: DataTypes.DATEONLY,
-        allowNull: false
+        allowNull: false,
       },
 
       start_time: {
         type: DataTypes.TIME,
-        allowNull: false
+        allowNull: false,
       },
 
       end_time: {
         type: DataTypes.TIME,
-        allowNull: false
+        allowNull: false,
       },
 
       status: {
@@ -63,13 +64,13 @@ module.exports = (sequelize) => {
           "completed",
           "no_show"
         ),
-        defaultValue: "pending"
+        defaultValue: "pending",
       },
 
       note: {
         type: DataTypes.TEXT,
-        allowNull: true
-      }
+        allowNull: true,
+      },
     },
     {
       tableName: "appointments",
@@ -77,9 +78,9 @@ module.exports = (sequelize) => {
       underscored: true,
       indexes: [
         {
-          fields: ["business_id", "appointment_date"]
-        }
-      ]
+          fields: ["business_id", "appointment_date"],
+        },
+      ],
     }
   );
 

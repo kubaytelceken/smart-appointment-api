@@ -2,11 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const adController = require("../controllers/ad.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
+const { protect } = require("../middleware/auth.middleware");
 // 🔐 Tüm ad route'ları auth korumalı
-router.use(authMiddleware);
-
+router.use(protect);
 // CREATE ad (business owner)
 router.post("/", adController.createAd);
 

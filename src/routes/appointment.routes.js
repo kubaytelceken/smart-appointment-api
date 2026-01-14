@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const appointmentController = require("../controllers/appointment.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
+
 const {
   checkAppointmentLimit
-} = require("../middlewares/subscription.middleware");
-// 🔐 Tüm appointment route'ları auth korumalı
-router.use(authMiddleware);
+} = require("../middleware/subscription.middleware");
+
+const { protect } = require("../middleware/auth.middleware");
+// 🔐 Tüm ad route'ları auth korumalı
+router.use(protect);
 
 /**
  * USER

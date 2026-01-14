@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const subscriptionUpgradeController = require("../controllers/subscriptionUpgrade.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
-router.use(authMiddleware);
+const { protect } = require("../middleware/auth.middleware");
+// 🔐 Tüm ad route'ları auth korumalı
+router.use(protect);
 
 // UPGRADE plan
 router.post("/upgrade", subscriptionUpgradeController.upgradePlan);

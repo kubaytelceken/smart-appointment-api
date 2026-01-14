@@ -53,8 +53,8 @@ Service.hasMany(Appointment, { foreignKey: "service_id" });
 Appointment.belongsTo(Service, { foreignKey: "service_id" });
 
 // SUBSCRIPTION
-User.hasMany(UserSubscription, { foreignKey: "user_id" });
-UserSubscription.belongsTo(User, { foreignKey: "user_id" });
+Business.hasOne(UserSubscription, { foreignKey: "business_id", as: "subscription" });
+UserSubscription.belongsTo(Business, { foreignKey: "business_id" });
 
 SubscriptionPlan.hasMany(UserSubscription, { foreignKey: "plan_id" });
 UserSubscription.belongsTo(SubscriptionPlan, { foreignKey: "plan_id" });

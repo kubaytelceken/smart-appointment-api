@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const adsLogController = require("../controllers/adslog.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-
+const { protect } = require("../middleware/auth.middleware");
+router.use(protect);
 /**
  * PUBLIC LOG ROUTES
  * (auth zorunlu değil)
@@ -22,7 +22,6 @@ router.post("/click", adsLogController.logClick);
 // Ad stats (auth gerekli)
 router.get(
   "/:adId/stats",
-  authMiddleware,
   adsLogController.getAdStats
 );
 

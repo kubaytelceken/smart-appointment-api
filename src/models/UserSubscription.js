@@ -9,9 +9,14 @@ module.exports = (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      user_id: {
+      business_id: {
         type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: "businesses",
+          key: "id",
+        },
+        onDelete: "CASCADE",
       },
       plan_id: {
         type: DataTypes.UUID,
@@ -29,8 +34,12 @@ module.exports = (sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
-      remaining_appointments: {
+      current_month_used: {
         type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      current_period_start: {
+        type: DataTypes.DATE,
         allowNull: false,
       },
     },

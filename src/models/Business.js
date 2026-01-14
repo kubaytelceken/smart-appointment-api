@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
             },
             slug :{
                 type : DataTypes.STRING,
-                unique: false,
+                unique: true,
                 allowNull : true
             },
             description :{
@@ -70,5 +70,7 @@ module.exports = (sequelize) => {
             paranoid: true
         }
     );
+
+    
     return Business;
 }

@@ -47,19 +47,6 @@ module.exports = (sequelize) => {
         defaultValue: "active"
       },
 
-      // 🔐 ABONELİK
-      plan: {
-        type: DataTypes.ENUM("FREE", "PRO"),
-        allowNull: false,
-        defaultValue: "FREE"
-      },
-
-      appointment_limit: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 50
-      },
-
       email_verified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
@@ -81,7 +68,6 @@ module.exports = (sequelize) => {
    User.associate = (models) => {
     User.hasOne(models.Profile, { foreignKey: "user_id" });
     User.hasMany(models.Business, { foreignKey: "owner_id" });
-    User.hasMany(models.UserSubscription, { foreignKey: "user_id" });
     User.hasMany(models.Appointment, { foreignKey: "user_id" });
   };
 
