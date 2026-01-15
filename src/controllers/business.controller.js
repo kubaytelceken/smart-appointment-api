@@ -6,11 +6,11 @@ const businessService = require("../services/business.service");
 const createBusiness = async (req, res) => {
   try {
     const ownerId = req.user.id;
-    const { name, category_id } = req.body;
+    const { name } = req.body;
 
-    if (!name || !category_id) {
+   if (!name) {
       return res.status(400).json({
-        error: "NAME_AND_CATEGORY_REQUIRED",
+        error: "NAME_REQUIRED",
       });
     }
 
@@ -21,8 +21,8 @@ const createBusiness = async (req, res) => {
 
     return res.status(201).json({ business });
   } catch (err) {
-    if (err.message === "CATEGORY_NOT_FOUND") {
-      return res.status(400).json({ error: err.message });
+    if (err.message === "PLAN_NOT_FOUND") {
+      return res.status(500).json({ error: "FREE_PLAN_NOT_CONFIGURED" });
     }
 
     console.error("Create business error:", err);

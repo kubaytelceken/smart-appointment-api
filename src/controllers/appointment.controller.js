@@ -44,11 +44,10 @@ const getBusinessAppointments = async (req, res) => {
     const ownerId = req.user.id;
     const { businessId } = req.params;
 
-    const appointments =
-      await appointmentService.getBusinessAppointments(
-        ownerId,
-        businessId
-      );
+    const appointments = await appointmentService.getBusinessAppointments(
+      ownerId,
+      businessId
+    );
 
     res.json(appointments);
   } catch (err) {
@@ -108,8 +107,8 @@ const cancelAppointment = async (req, res) => {
     const { id } = req.params;
 
     const appointment = await appointmentService.cancelAppointment(
-      id,
-      req.user
+      req.user.id,
+      id
     );
 
     res.json(appointment);

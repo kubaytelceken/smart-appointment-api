@@ -3,16 +3,16 @@ const router = express.Router();
 
 const userSubscriptionController = require("../controllers/userSubscription.controller");
 const { protect } = require("../middleware/auth.middleware");
-// 🔐 Tüm ad route'ları auth korumalı
+
 router.use(protect);
 
-// BUY subscription
+// BUY subscription (for a business)
 router.post("/buy", userSubscriptionController.buySubscription);
 
-// GET my active subscription
-router.get("/me", userSubscriptionController.getMySubscription);
+// GET business subscription
+router.get("/business/:businessId", userSubscriptionController.getBusinessSubscription);
 
 // CANCEL subscription
-router.delete("/cancel", userSubscriptionController.cancelSubscription);
+router.delete("/business/:businessId/cancel", userSubscriptionController.cancelSubscription);
 
 module.exports = router;

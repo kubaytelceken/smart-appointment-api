@@ -1,13 +1,14 @@
 const userSubscriptionService = require("../services/userSubscription.service");
 
-// BUY PLAN
+// BUY PLAN (for a business)
 const buySubscription = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { planId } = req.body;
+    const { businessId, planId } = req.body;
 
-    const subscription = await userSubscriptionService.createUserSubscription(
-      userId,
+    // TODO: Business'ın req.user'a ait olduğunu kontrol et
+
+    const subscription = await userSubscriptionService.createSubscription(
+      businessId,
       planId
     );
 
@@ -22,11 +23,13 @@ const buySubscription = async (req, res) => {
   }
 };
 
-// GET my active subscription
-const getMySubscription = async (req, res) => {
+// GET business subscription
+const getBusinessSubscription = async (req, res) => {
   try {
-    const subscription = await userSubscriptionService.getMySubscription(
-      req.user.id
+    const { businessId } = req.params;
+
+    const subscription = await userSubscriptionService.getBusinessSubscription(
+      businessId
     );
     res.json(subscription);
   } catch (err) {
@@ -38,7 +41,9 @@ const getMySubscription = async (req, res) => {
 // CANCEL
 const cancelSubscription = async (req, res) => {
   try {
-    await userSubscriptionService.cancelSubscription(req.user.id);
+    const { businessId } = req.params;
+
+    await userSubscriptionService.cancelSubscription(businessId);
     res.json({ message: "SUBSCRIPTION_CANCELLED" });
   } catch (err) {
     if (err.message === "SUBSCRIPTION_NOT_FOUND") {
@@ -52,6 +57,6 @@ const cancelSubscription = async (req, res) => {
 
 module.exports = {
   buySubscription,
-  getMySubscription,
+  getBusinessSubscription,
   cancelSubscription
 };

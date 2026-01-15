@@ -4,7 +4,6 @@ const sequelize = require("../config/database");
 const UserModel = require("./User");
 const ProfileModel = require("./Profile");
 const BusinessModel = require("./Business");
-const BusinessCategoryModel = require("./BusinessCategory");
 const ServiceModel = require("./Service");
 const AppointmentModel = require("./Appointment");
 const SubscriptionPlanModel = require("./SubscriptionPlan");
@@ -16,7 +15,6 @@ const AdsLogModel = require("./AdsLog");
 const User = UserModel(sequelize);
 const Profile = ProfileModel(sequelize);
 const Business = BusinessModel(sequelize);
-const BusinessCategory = BusinessCategoryModel(sequelize);
 const Service = ServiceModel(sequelize);
 const Appointment = AppointmentModel(sequelize);
 const SubscriptionPlan = SubscriptionPlanModel(sequelize);
@@ -36,9 +34,6 @@ User.hasMany(Business, { foreignKey: "owner_id" });
 Business.belongsTo(User, { foreignKey: "owner_id" });
 
 // BUSINESS
-Business.belongsTo(BusinessCategory, { foreignKey: "category_id" });
-BusinessCategory.hasMany(Business, { foreignKey: "category_id" });
-
 Business.hasMany(Service, { foreignKey: "business_id" });
 Service.belongsTo(Business, { foreignKey: "business_id" });
 
@@ -78,7 +73,6 @@ module.exports = {
   User,
   Profile,
   Business,
-  BusinessCategory,
   Service,
   Appointment,
   SubscriptionPlan,

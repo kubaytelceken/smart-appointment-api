@@ -7,10 +7,7 @@ const expireSubscriptionsJob = () => {
   cron.schedule("0 2 * * *", async () => {
     try {
       const expiredCount = await UserSubscription.update(
-        {
-          is_active: false,
-          remaining_appointments: 0
-        },
+        { is_active: false },
         {
           where: {
             is_active: true,
@@ -19,9 +16,7 @@ const expireSubscriptionsJob = () => {
         }
       );
 
-      console.log(
-        `[CRON] Expired subscriptions updated: ${expiredCount[0]}`
-      );
+      console.log(`[CRON] Expired subscriptions updated: ${expiredCount[0]}`);
     } catch (err) {
       console.error("[CRON] Subscription expire failed", err);
     }

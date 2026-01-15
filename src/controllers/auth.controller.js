@@ -19,8 +19,7 @@ const register = async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        plan: user.plan,
-        appointmentLimit: user.appointment_limit,
+        role: user.role,
       },
     });
   } catch (err) {
@@ -46,13 +45,10 @@ const login = async (req, res) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        plan: user.plan,
       },
     });
   } catch (err) {
-    if (
-      err.message === "EMAIL_OR_PASSWORD_WRONG"
-    ) {
+    if (err.message === "EMAIL_OR_PASSWORD_WRONG") {
       return res.status(401).json({ error: err.message });
     }
 

@@ -1,7 +1,8 @@
-const { UserSubscription, SubscriptionPlan } = require("../models");
+const { UserSubscription, SubscriptionPlan, sequelize } = require("../models");
 const { Op } = require("sequelize");
 
-const createUserSubscription = async (userId, planId) => {
+// Yeni abonelik oluştur
+const createSubscription = async (businessId, planId) => {
   return await sequelize.transaction(async (t) => {
     const plan = await SubscriptionPlan.findOne({
       where: { id: planId, is_active: true },
@@ -12,60 +13,95 @@ const createUserSubscription = async (userId, planId) => {
       throw new Error("PLAN_NOT_FOUND");
     }
 
-    // Önce eski aktif subscription'ı kapat
+    // Eski aktif subscription'ı kapat
     await UserSubscription.update(
       { is_active: false },
       {
-        where: {
-          user_id: userId,
-          is_active: true
-        },
+        where: { business_id: businessId, is_active: true },
         transaction: t
       }
     );
 
-    const startDate = new Date();
+    const now = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + plan.duration_month);
 
-    const subscription = await UserSubscription.create(
+    return await UserSubscription.create(
       {
-        user_id: userId,
+        business_id: businessId,
         plan_id: plan.id,
-        start_date: startDate,
+        start_date: now,
         end_date: endDate,
         is_active: true,
-        remaining_appointments: plan.appointment_limit
+        current_month_used: 0,
+        current_period_start: now
       },
       { transaction: t }
     );
-
-    return subscription;
   });
 };
 
-const getMySubscription = async (userId) => {
+// İşletmenin aktif aboneliğini getir
+const getBusinessSubscription = async (businessId) => {
   return await UserSubscription.findOne({
     where: {
-      user_id: userId,
+      business_id: businessId,
       is_active: true,
       end_date: { [Op.gt]: new Date() }
     },
-    include: [
-      {
-        model: SubscriptionPlan,
-        attributes: ["name", "price", "appointment_limit"]
-      }
-    ]
+    include: [{ model: SubscriptionPlan }]
   });
 };
 
-const cancelSubscription = async (userId) => {
+// Ay değiştiyse sayacı resetle
+const checkAndResetMonthlyLimit = async (subscription) => {
+  const now = new Date();
+  const periodStart = new Date(subscription.current_period_start);
+
+  if (now.getMonth() !== periodStart.getMonth() ||
+      now.getFullYear() !== periodStart.getFullYear()) {
+    await subscription.update({
+      current_month_used: 0,
+      current_period_start: now
+    });
+  }
+  return subscription;
+};
+
+// Randevu oluşturulabilir mi?
+const canCreateAppointment = async (businessId) => {
+  const subscription = await getBusinessSubscription(businessId);
+
+  if (!subscription) {
+    throw new Error("NO_ACTIVE_SUBSCRIPTION");
+  }
+
+  await checkAndResetMonthlyLimit(subscription);
+
+  const limit = subscription.SubscriptionPlan.appointment_limit;
+
+  // null = sınırsız
+  if (limit === null) return true;
+
+  if (subscription.current_month_used >= limit) {
+    throw new Error("MONTHLY_LIMIT_REACHED");
+  }
+
+  return true;
+};
+
+// Randevu sonrası sayacı artır
+const incrementAppointmentCount = async (businessId) => {
+  const subscription = await getBusinessSubscription(businessId);
+  if (subscription) {
+    await subscription.increment("current_month_used");
+  }
+};
+
+// Aboneliği iptal et
+const cancelSubscription = async (businessId) => {
   const sub = await UserSubscription.findOne({
-    where: {
-      user_id: userId,
-      is_active: true
-    }
+    where: { business_id: businessId, is_active: true }
   });
 
   if (!sub) {
@@ -77,7 +113,10 @@ const cancelSubscription = async (userId) => {
 };
 
 module.exports = {
-  createUserSubscription,
-  getMySubscription,
+  createSubscription,
+  getBusinessSubscription,
+  checkAndResetMonthlyLimit,
+  canCreateAppointment,
+  incrementAppointmentCount,
   cancelSubscription
 };

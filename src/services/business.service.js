@@ -1,5 +1,7 @@
-const { Business, BusinessCategory } = require("../models");
+const { Business } = require("../models");
 const slugify = require("slugify");
+const userSubscriptionService = require("./userSubscription.service");
+const subscriptionPlanService = require("./subscriptionPlan.service");
 
 /**
  * CREATE
@@ -7,37 +9,38 @@ const slugify = require("slugify");
 const createBusiness = async ({
   ownerId,
   name,
-  category_id,
   description,
   phone,
   address,
+  country,
+  city,
+  district,
+  postal_code,
   location_lat,
   location_lng,
 }) => {
-  const category = await BusinessCategory.findByPk(category_id);
-  if (!category) {
-    throw new Error("CATEGORY_NOT_FOUND");
-  }
-
-  const baseSlug = slugify(name, {
-    lower: true,
-    strict: true,
-  });
-
+  const baseSlug = slugify(name, { lower: true, strict: true });
   const uniqueSlug = `${baseSlug}-${Date.now()}`;
 
   const business = await Business.create({
     owner_id: ownerId,
-    category_id,
     name,
     slug: uniqueSlug,
     description,
     phone,
     address,
+    country,
+    city,
+    district,
+    postal_code,
     location_lat,
     location_lng,
     status: "active",
   });
+
+  // ⭐ Free subscription ata
+  const freePlan = await subscriptionPlanService.getPlanByCode("FREE");
+  await userSubscriptionService.createSubscription(business.id, freePlan.id);
 
   return business;
 };
@@ -74,23 +77,26 @@ const updateBusiness = async ({
   description,
   phone,
   address,
+  country,
+  city,
+  district,
+  postal_code,
   location_lat,
   location_lng,
 }) => {
   const business = await Business.findByPk(businessId);
 
-  if (!business) {
-    throw new Error("BUSINESS_NOT_FOUND");
-  }
-
-  if (business.owner_id !== ownerId) {
-    throw new Error("FORBIDDEN");
-  }
+  if (!business) throw new Error("BUSINESS_NOT_FOUND");
+  if (business.owner_id !== ownerId) throw new Error("FORBIDDEN");
 
   await business.update({
     description,
     phone,
     address,
+    country,
+    city,
+    district,
+    postal_code,
     location_lat,
     location_lng,
   });
@@ -104,13 +110,8 @@ const updateBusiness = async ({
 const deleteBusiness = async (ownerId, businessId) => {
   const business = await Business.findByPk(businessId);
 
-  if (!business) {
-    throw new Error("BUSINESS_NOT_FOUND");
-  }
-
-  if (business.owner_id !== ownerId) {
-    throw new Error("FORBIDDEN");
-  }
+  if (!business) throw new Error("BUSINESS_NOT_FOUND");
+  if (business.owner_id !== ownerId) throw new Error("FORBIDDEN");
 
   await business.destroy();
 };

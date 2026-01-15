@@ -4,10 +4,11 @@ const {
 
 const upgradePlan = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { planId } = req.body;
+    const { businessId, planId } = req.body;
 
-    const subscription = await upgradeSubscription(userId, planId);
+    // TODO: Business'ın req.user'a ait olduğunu kontrol et
+
+    const subscription = await upgradeSubscription(businessId, planId);
 
     res.status(201).json(subscription);
   } catch (err) {

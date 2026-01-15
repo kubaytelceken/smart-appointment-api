@@ -4,7 +4,7 @@ const {
   sequelize
 } = require("../models");
 
-const upgradeSubscription = async (userId, newPlanId) => {
+const upgradeSubscription = async (businessId, newPlanId) => {
   return await sequelize.transaction(async (t) => {
     const newPlan = await SubscriptionPlan.findOne({
       where: { id: newPlanId, is_active: true },
@@ -20,25 +20,26 @@ const upgradeSubscription = async (userId, newPlanId) => {
       { is_active: false },
       {
         where: {
-          user_id: userId,
+          business_id: businessId,
           is_active: true
         },
         transaction: t
       }
     );
 
-    const startDate = new Date();
+    const now = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + newPlan.duration_month);
 
     const newSubscription = await UserSubscription.create(
       {
-        user_id: userId,
+        business_id: businessId,
         plan_id: newPlan.id,
-        start_date: startDate,
+        start_date: now,
         end_date: endDate,
         is_active: true,
-        remaining_appointments: newPlan.appointment_limit
+        current_month_used: 0,
+        current_period_start: now
       },
       { transaction: t }
     );

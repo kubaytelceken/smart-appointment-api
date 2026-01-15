@@ -3,9 +3,6 @@ const router = express.Router();
 
 const appointmentController = require("../controllers/appointment.controller");
 
-const {
-  checkAppointmentLimit
-} = require("../middleware/subscription.middleware");
 
 const { protect } = require("../middleware/auth.middleware");
 // 🔐 Tüm ad route'ları auth korumalı
@@ -16,7 +13,7 @@ router.use(protect);
  */
 
 // CREATE appointment
-router.post("/", checkAppointmentLimit,appointmentController.createAppointment);
+router.post("/",appointmentController.createAppointment);
 
 // GET my appointments
 router.get("/my", appointmentController.getMyAppointments);

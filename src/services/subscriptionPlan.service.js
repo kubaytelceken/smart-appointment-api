@@ -11,6 +11,13 @@ const getAllPlans = async () => {
   });
 };
 
+
+const getPlanByCode = async (code) => {
+  const plan = await SubscriptionPlan.findOne({ where: { code } });
+  if (!plan) throw new Error("PLAN_NOT_FOUND");
+  return plan;
+};
+
 const getPlanById = async (planId) => {
   const plan = await SubscriptionPlan.findByPk(planId);
   if (!plan) throw new Error("PLAN_NOT_FOUND");

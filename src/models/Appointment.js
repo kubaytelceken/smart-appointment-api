@@ -10,17 +10,15 @@ module.exports = (sequelize) => {
         primaryKey: true,
       },
 
-      
-      business_id: {
+      user_id: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-          model: "businesses",
+          model: "users",
           key: "id",
         },
         onDelete: "CASCADE",
       },
-
       business_id: {
         type: DataTypes.UUID,
         allowNull: false,
