@@ -3,7 +3,7 @@ const { generateToken } = require("../utils/jwt");
 
 const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password,firstName,lastName,phone } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -11,7 +11,7 @@ const register = async (req, res) => {
       });
     }
 
-    const user = await authService.register({ email, password });
+    const user = await authService.register({ email, password,firstName,lastName,phone });
     const token = generateToken(user.id);
 
     return res.status(201).json({

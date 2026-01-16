@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { User, Profile } = require("../models");
 
-const register = async ({ email, password }) => {
+const register = async ({ email, password,firstName,lastName,phone }) => {
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
     throw new Error("EMAIL_ALREADY_EXISTS");
@@ -14,10 +14,9 @@ const register = async ({ email, password }) => {
     password_hash: passwordHash,
     provider: "local",
     status: "active"
-    // plan ve appointment_limit kaldırıldı
   });
 
-  await Profile.create({ user_id: user.id });
+  await Profile.create({ user_id: user.id,first_name : firstName,last_name : lastName,phone:phone });
 
   return user;
 };
