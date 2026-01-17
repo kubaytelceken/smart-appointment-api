@@ -61,7 +61,42 @@ const login = async (req, res) => {
   }
 };
 
+
+const googleSignIn = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    const user = await authService.verifyGoogleToken(idToken);
+    const token = generateToken(user.id);
+
+    res.json({
+      token,
+      user: { id: user.id, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "INVALID_GOOGLE_TOKEN" });
+  }
+};
+
+const appleSignIn = async (req, res) => {
+  try {
+    const { identityToken, email, fullName } = req.body;
+    const user = await authService.verifyAppleToken(identityToken, email, fullName);
+    const token = generateToken(user.id);
+
+    res.json({
+      token,
+      user: { id: user.id, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ error: "INVALID_TOKEN" });
+  }
+};
+
 module.exports = {
   register,
-  login
+  login,
+  googleSignIn,
+  appleSignIn
 };
